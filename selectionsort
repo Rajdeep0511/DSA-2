@@ -1,0 +1,35 @@
+#include<iostream>
+using namespace std;
+void selectionsort(int a[],int n)
+{
+    int min=a[0];
+    int ith=0;
+    for(int i=0;i<=n-1;i++)
+    {
+        for(int j=i;j<=n-1;j++)
+        {
+            if(a[j]<=min)
+            {
+               min=a[j];
+               ith=j;
+            }
+        }
+    }
+    cout<<"minimum element:"<<min<<endl;
+    cout<<"minimum index:"<<ith<<endl;
+}
+
+int main(){
+    int r,p;
+    cout<<"enter no of elements:";
+    cin>>r;
+    int a[r];
+    cout<<"enter array:";
+    for(p=0;p<r;p++)
+    {
+    cin>>a[p];
+    }
+    selectionsort(a,p);
+
+    return 0;
+}
