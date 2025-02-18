@@ -1,0 +1,40 @@
+#include <iostream>
+using namespace std;
+
+pair<int, int> find2DPeak(int arr[][4], int n, int m) {
+    int low = 0, high = m - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        int max_row = 0;
+        for (int i = 0; i < n; i++) {
+            if (arr[i][mid] > arr[max_row][mid]) {
+                max_row = i;
+            }
+        }
+        if ((mid == 0 || arr[max_row][mid - 1] <= arr[max_row][mid]) &&
+            (mid == m - 1 || arr[max_row][mid + 1] <= arr[max_row][mid])) {
+            return {max_row, mid};
+        } else if (mid > 0 && arr[max_row][mid - 1] > arr[max_row][mid]) {
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+    }
+    return {-1, -1}; // Peak not found (shouldn't happen in a well-formed input)
+}
+
+int main() {
+    int arr[4][4] = {
+        {10, 8, 10, 10},
+        {14, 13, 12, 11},
+        {15, 9, 11, 21},
+        {16, 17, 19, 20}
+    };
+    int n = 4, m = 4;
+    pair<int, int> peak = find2DPeak(arr, n, m);
+    if (peak.first != -1 && peak.second != -1)
+        cout << "Peak element is at (" << peak.first << ", " << peak.second << ") with value " << arr[peak.first][peak.second] << endl;
+    else
+        cout << "No peak element found" << endl;
+    return 0;
+}
