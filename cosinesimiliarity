@@ -1,0 +1,51 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+#include <cmath>
+using namespace std;
+
+void readFile(const char* filename, int wordCount[], const int wordCountSize) {
+    ifstream file(filename);
+    char word[50];
+    while (file >> word) {
+        for (int i = 0; i < wordCountSize; i++) {
+            if (strcmp(word, wordCount + i * 50) == 0) {
+                wordCount[wordCountSize + i]++;
+                break;
+            }
+        }
+    }
+}
+
+int dotProduct(int v1[], int v2[], int size) {
+    int dot = 0;
+    for (int i = 0; i < size; i++) {
+        dot += v1[i] * v2[i];
+    }
+    return dot;
+}
+
+int magnitude(int v[], int size) {
+    int mag = 0;
+    for (int i = 0; i < size; i++) {
+        mag += v[i] * v[i];
+    }
+    return sqrt(mag);
+}
+
+float cosineSimilarity(int v1[], int v2[], int size) {
+    return dotProduct(v1, v2, size) / (magnitude(v1, size) * magnitude(v2, size));
+}
+
+int main() {
+    const int wordCountSize = 100;
+    int wordCount1[wordCountSize * 2] = {0};
+    int wordCount2[wordCountSize * 2] = {0};
+    readFile("file1.txt", wordCount1, wordCountSize);
+    readFile("file2.txt", wordCount2, wordCountSize);
+
+    float similarity = cosineSimilarity(wordCount1 + wordCountSize, wordCount2 + wordCountSize, wordCountSize);
+    cout << "Cosine Similarity: " << similarity << endl;
+
+    return 0;
+}
