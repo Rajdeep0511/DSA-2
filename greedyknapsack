@@ -1,0 +1,65 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Structure for an item
+struct Item {
+    int value, weight;
+
+    // Constructor
+    Item(int value, int weight) : value(value), weight(weight) {}
+};
+
+// Comparison function to sort items by value/weight ratio in descending order
+bool compare(Item a, Item b) {
+    double r1 = (double)a.value / a.weight;
+    double r2 = (double)b.value / b.weight;
+    return r1 > r2;
+}
+
+// Function to solve Fractional Knapsack problem
+double fractionalKnapsack(int capacity, vector<Item> items) {
+    // Step 1: Sort items by value-to-weight ratio
+    sort(items.begin(), items.end(), compare);
+
+    double totalValue = 0.0;
+
+    // Step 2: Loop through items
+    for (Item item : items) {
+        if (capacity == 0)
+            break;
+
+        // Step 3: If the item can be fully taken
+        if (item.weight <= capacity) {
+            capacity -= item.weight;
+            totalValue += item.value;
+        }
+        // Step 4: If only a fraction of the item can be taken
+        else {
+            double fraction = (double)capacity / item.weight;
+            totalValue += item.value * fraction;
+            capacity = 0;
+        }
+    }
+
+    return totalValue;
+}
+
+// Main function
+int main() {
+    int capacity = 50; // Max weight capacity of knapsack
+
+    vector<Item> items = {
+        Item(60, 10),
+        Item(100, 20),
+        Item(120, 30)
+    };
+
+    double maxValue = fractionalKnapsack(capacity, items);
+
+    cout << "Maximum value in knapsack = " << maxValue << endl;
+
+    return 0;
+}
