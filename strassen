@@ -1,0 +1,89 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+typedef vector<vector<int>> Matrix;
+
+// Add two matrices
+Matrix add(const Matrix &A, const Matrix &B) {
+    Matrix C(A.size(), vector<int>(A.size()));
+    for (int i = 0; i < A.size(); ++i)
+        for (int j = 0; j < A.size(); ++j)
+            C[i][j] = A[i][j] + B[i][j];
+    return C;
+}
+
+// Subtract two matrices
+Matrix subtract(const Matrix &A, const Matrix &B) {
+    Matrix C(A.size(), vector<int>(A.size()));
+    for (int i = 0; i < A.size(); ++i)
+        for (int j = 0; j < A.size(); ++j)
+            C[i][j] = A[i][j] - B[i][j];
+    return C;
+}
+
+// Recursive Strassen algorithm
+Matrix strassen(const Matrix &A, const Matrix &B) {
+    int n = A.size();
+    Matrix C(n, vector<int>(n));
+
+    if (n == 1) {
+        C[0][0] = A[0][0] * B[0][0];
+        return C;
+    }
+
+    int half = n / 2;
+    Matrix A11(half, vector<int>(half)), A12(half, vector<int>(half));
+    Matrix A21(half, vector<int>(half)), A22(half, vector<int>(half));
+    Matrix B11(half, vector<int>(half)), B12(half, vector<int>(half));
+    Matrix B21(half, vector<int>(half)), B22(half, vector<int>(half));
+
+    // Divide matrices into quadrants
+    for (int i = 0; i < half; ++i)
+        for (int j = 0; j < half; ++j) {
+            A11[i][j] = A[i][j];
+            A12[i][j] = A[i][j + half];
+            A21[i][j] = A[i + half][j];
+            A22[i][j] = A[i + half][j + half];
+            B11[i][j] = B[i][j];
+            B12[i][j] = B[i][j + half];
+            B21[i][j] = B[i + half][j];
+            B22[i][j] = B[i + half][j + half];
+        }
+
+    // Compute 7 products
+    Matrix P1 = strassen(A11, subtract(B12, B22));
+    Matrix P2 = strassen(add(A11, A12), B22);
+    Matrix P3 = strassen(add(A21, A22), B11);
+    Matrix P4 = strassen(A22, subtract(B21, B11));
+    Matrix P5 = strassen(add(A11, A22), add(B11, B22));
+    Matrix P6 = strassen(subtract(A12, A22), add(B21, B22));
+    Matrix P7 = strassen(subtract(A11, A21), add(B11, B12));
+
+    // Combine quadrants
+    for (int i = 0; i < half; ++i)
+        for (int j = 0; j < half; ++j) {
+            C[i][j] = P5[i][j] + P4[i][j] - P2[i][j] + P6[i][j];
+            C[i][j + half] = P1[i][j] + P2[i][j];
+            C[i + half][j] = P3[i][j] + P4[i][j];
+            C[i + half][j + half] = P5[i][j] + P1[i][j] - P3[i][j] - P7[i][j];
+        }
+
+    return C;
+}
+
+int main() {
+    int n = 2; // Example size (must be power of 2)
+    Matrix A = {{1, 2}, {3, 4}};
+    Matrix B = {{5, 6}, {7, 8}};
+
+    Matrix C = strassen(A, B);
+
+    for (const auto &row : C) {
+        for (int val : row)
+            cout << val << " ";
+        cout << endl;
+    }
+
+    return 0;
+}
