@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Point {
+    int x, y;
+};
+
+int orientation(Point p, Point q, Point r) {
+    int val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+    return (val == 0) ? 0 : (val > 0 ? 1 : -1);
+}
+
+vector<Point> convexHull(vector<Point> points) {
+    int n = points.size();
+    sort(points.begin(), points.end(), [](Point a, Point b) {
+        return a.x < b.x || (a.x == b.x && a.y < b.y);
+    });
+
+    vector<Point> hull;
+    for (int i = 0; i < 2; i++) {
+        int start = hull.size();
+        for (Point p : points) {
+            while (hull.size() >= start + 2 && orientation(hull[hull.size() - 2], hull.back(), p) != -1)
+                hull.pop_back();
+            hull.push_back(p);
+        }
+        hull.pop_back();
+        reverse(points.begin(), points.end());
+    }
+
+    return hull;
+}
+
+int main() {
+    vector<Point> points = {{0, 0}, {2, 2}, {1, 1}, {2, 0}, {3, 3}, {0, 3}, {3, 0}};
+    vector<Point> hull = convexHull(points);
+
+    cout << "Convex Hull:\n";
+    for (Point p : hull)
+        cout << "(" << p.x << ", " << p.y << ")\n";
+
+    return 0;
+}
