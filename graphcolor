@@ -1,0 +1,39 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+bool isSafe(int node, vector<vector<int>> &graph, vector<int> &colors, int color) {
+    for (int neighbor : graph[node]) {
+        if (colors[neighbor] == color) return false;
+    }
+    return true;
+}
+
+bool graphColoringUtil(vector<vector<int>> &graph, vector<int> &colors, int m, int node) {
+    if (node == graph.size()) return true;
+
+    for (int c = 1; c <= m; c++) {
+        if (isSafe(node, graph, colors, c)) {
+            colors[node] = c;
+            if (graphColoringUtil(graph, colors, m, node + 1)) return true;
+            colors[node] = 0;
+        }
+    }
+    return false;
+}
+
+bool graphColoring(vector<vector<int>> &graph, int m) {
+    vector<int> colors(graph.size(), 0);
+    return graphColoringUtil(graph, colors, m, 0);
+}
+
+int main() {
+    vector<vector<int>> graph = {{1, 2}, {0, 2}, {0, 1}}; // Example graph (edge list representation)
+    int m = 3; // Number of colors
+    if (graphColoring(graph, m)) {
+        cout << "Graph can be colored with " << m << " colors.\n";
+    } else {
+        cout << "Graph cannot be colored with " << m << " colors.\n";
+    }
+    return 0;
+}
