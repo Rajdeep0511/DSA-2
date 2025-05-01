@@ -1,0 +1,58 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+const int N = 5; // Number of vertices
+vector<vector<int>> graph = {
+    {0, 1, 1, 0, 0},
+    {1, 0, 1, 1, 0},
+    {1, 1, 0, 0, 1},
+    {0, 1, 0, 0, 1},
+    {0, 0, 1, 1, 0}
+};
+vector<int> path(N, -1);
+vector<bool> visited(N, false);
+
+bool isSafe(int v, int pos) {
+    if (graph[path[pos - 1]][v] == 0)
+        return false;
+    if (visited[v])
+        return false;
+    return true;
+}
+
+bool hamiltonianCycleUtil(int pos) {
+    if (pos == N) {
+        return graph[path[pos - 1]][path[0]] == 1;
+    }
+  for (int v = 1; v < N; v++) {
+        if (isSafe(v, pos)) {
+            path[pos] = v;
+            visited[v] = true;
+if (hamiltonianCycleUtil(pos + 1))
+                return true;
+ path[pos] = -1;
+            visited[v] = false;
+        }
+    }
+
+    return false;
+}
+bool findHamiltonianCycle() {
+    path[0] = 0;
+    visited[0] = true;
+
+    return hamiltonianCycleUtil(1);
+}
+
+int main() {
+    if (findHamiltonianCycle()) {
+        cout << "Hamiltonian Cycle Found: ";
+        for (int v : path)
+            cout << v << " ";
+        cout << path[0] << endl;
+    } else {
+        cout << "No Hamiltonian Cycle exists" << endl;
+    }
+
+    return 0;
+}
